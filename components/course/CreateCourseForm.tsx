@@ -13,13 +13,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import { Combobox } from "../custom/ComboBox";
 
 const formSchema = z.object({
   title: z.string().min(2, "Title is required and minimum of 2 characters"),
   categoryId: z.string().min(1, "Category is required"),
   subCategoryId: z.string().min(1, "subCategory is required"),
 });
-const CreateCourseForm = () => {
+
+interface ICourseProps {
+  categories: { value: string, label: string}[],
+  subcategories: { value: string, label: string, categoryId: string}[]
+}
+
+const CreateCourseForm = ({categories, subcategories}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,6 +35,9 @@ const CreateCourseForm = () => {
       subCategoryId: "",
     },
   });
+
+
+
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -51,7 +61,33 @@ const CreateCourseForm = () => {
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="Ex. Web Development for beginners" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Category</FormLabel>
+                <FormControl>
+                  <Combobox options={categories} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="subCategoryId"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Subcategory</FormLabel>
+                <FormControl>
+                  <Combobox options={subcategories} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

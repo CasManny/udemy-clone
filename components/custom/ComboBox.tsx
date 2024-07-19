@@ -18,13 +18,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-interface IComboBox {
-  options: { label: string; value: string }[];
+
+interface IComboBoxProps {
+  options: { label: string; value: string; categoryId?: string }[],
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-export function Combobox({ options }: IComboBox) {
+export function Combobox({ options, value, onChange}: IComboBoxProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -36,7 +38,7 @@ export function Combobox({ options }: IComboBox) {
           className="w-[200px] justify-between"
         >
           {value
-            ? options.find((option) => option.value === value)?.label
+            ? options?.find((option) => option?.value === value)?.label
             : "Select option..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -46,22 +48,22 @@ export function Combobox({ options }: IComboBox) {
           <CommandInput placeholder="Search option..." />
           <CommandEmpty>No option found.</CommandEmpty>
           <CommandGroup>
-            {options.map((framework) => (
+            {options?.map((option) => (
               <CommandItem
-                key={framework.value}
-                value={framework.value}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue);
+                key={option?.value}
+                value={option?.value}
+                onSelect={() => {
+                  onChange(option.value === value ? "" : option.value);
                   setOpen(false);
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0"
+                    value === option.value ? "opacity-100" : "opacity-0"
                   )}
                 />
-                {framework.label}
+                {option?.label}
               </CommandItem>
             ))}
           </CommandGroup>

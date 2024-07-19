@@ -44,3 +44,4 @@ export const seed = async () => {
     console.log("Seeding failed", error);
   }
 };
+
