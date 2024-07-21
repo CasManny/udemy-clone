@@ -14,6 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { Combobox } from "../custom/ComboBox";
+import { useRouter } from "next/navigation";
+import { createCourse } from "@/lib/database/actions/course.actions";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   title: z.string().min(2, "Title is required and minimum of 2 characters"),
@@ -26,7 +29,8 @@ interface ICourseProps {
   subcategories: { value: string, label: string, categoryId: string}[]
 }
 
-const CreateCourseForm = ({categories, subcategories}) => {
+const CreateCourseForm = ({ categories, subcategories }: ICourseProps) => {
+  const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,10 +43,19 @@ const CreateCourseForm = ({categories, subcategories}) => {
 
 
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+  
+    try {
+      const course = await createCourse({ title: values.title, categoryId: values.categoryId, subCategoryId: values.subCategoryId })
+      toast.success("New Course Created")
+      router.push(`/instructor/courses/${course?._id}/basic`)
+      console.log(values)
+    } catch (error) {
+      console.log("Failed to create new course")
+      toast.error("Something went")
+    }
   }
   return (
     <div className="p-10">

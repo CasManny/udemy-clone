@@ -1,10 +1,10 @@
-
 import mongoose from "mongoose";
 
-const courseSchema = new mongoose.Schema({
+const courseSchema = new mongoose.Schema(
+  {
     instructorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Instructor"
+      type: String,
+      required: true,
     },
     title: String,
     subtitle: String,
@@ -12,22 +12,26 @@ const courseSchema = new mongoose.Schema({
     imageUrl: String,
     price: Number,
     isPublished: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     categoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
+
+    level: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Level",
     },
     subCategory: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Subcategory"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subcategory",
+      required: true,
     },
-    level: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Level"
-    }
+  },
+  { timestamps: true }
+);
 
-}, {timestamps: true})
-
-export const Course = mongoose.models.Course || mongoose.model("Course", courseSchema)
+export const Course =
+  mongoose.models.Course || mongoose.model("Course", courseSchema);
