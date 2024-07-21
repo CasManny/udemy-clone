@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "../connect";
-import { ICreatecourse } from "@/constants";
+import { ICreatecourse, IFormdata } from "@/constants";
 import { Course } from "../models/course.model";
 
 export const createCourse = async ({
@@ -49,9 +49,30 @@ export const getCourseDetail = async ({ courseId }: { courseId: string }) => {
     await connectToDatabase();
     const { userId } = auth();
     const course = await Course.find({ instructorId: userId, _id: courseId });
-    return course;
+    return course
   } catch (error: any) {
     console.log("Error in fetch course detail");
     throw new Error(error.message);
   }
 };
+
+export const updateCourse = async ({formdata}: IFormdata) => {
+  const { userId } = auth()
+  const { title, subCategory,courseId, subtitle, description, categoryId, levelId, imageUrl, price } = formdata
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
+  try {
+    await connectToDatabase()
+    const course = await Course.updateOne({ _id: courseId, instructorId: userId }, {
+      title, subCategory, description, categoryId, levelId, imageUrl, price, subtitle
+    })
+
+    return JSON.parse(JSON.stringify(course))
+
+
+  } catch (error: any) {
+    console.log(error.message)
+    throw new Error("Somethin went wrong")
+  }
+}

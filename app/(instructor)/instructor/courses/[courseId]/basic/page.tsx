@@ -12,14 +12,16 @@ const CourseBasics = async  ({ params }: { params: { courseId: string } }) => {
     return redirect('/sign-in')
   }
   const courseData = await getCourseDetail({ courseId: params.courseId })
-  const categories = await getAllCategories()
-  const subcategories = await getAllSubCategories()
+  const categoriesData = await getAllCategories()
+  const subcategoriesData = await getAllSubCategories()
   const levelsData = await getAllLevels()
   if (!courseData) {
     return redirect("/instructor/courses")
   }
   const course = JSON.parse(JSON.stringify(courseData[0]))
   const levels = JSON.parse(JSON.stringify(levelsData))
+  const subcategories = JSON.parse(JSON.stringify(subcategoriesData))
+  const categories = JSON.parse(JSON.stringify(categoriesData))
 
   return (
     <div className="px-10">
