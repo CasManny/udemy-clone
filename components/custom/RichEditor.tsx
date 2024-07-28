@@ -8,9 +8,10 @@ interface IRichEditor {
     onchange: (value: string) => void;
     value?: string;
 }
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 
 const RichEditor = ({ placeholder, onchange, value }: IRichEditor) => {
-    const ReactQuill = useMemo(() => dynamic(() => import('react-quill'), { ssr: false}), [])
+    // const ReactQuill = useMemo(() => dynamic(() => import('react-quill'), { ssr: false}), [])
     return (
         <ReactQuill
             theme='snow'

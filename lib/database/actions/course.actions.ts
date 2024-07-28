@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "../connect";
 import { ICreatecourse, IFormdata } from "@/constants";
-import { Course } from "../models/course.model";
+import { CourseModel } from "../models/course.model";
 
 export const createCourse = async ({
   title,
@@ -16,7 +16,7 @@ export const createCourse = async ({
     if (!userId) {
       throw new Error("No userId found");
     }
-    const newCourse = new Course({
+    const newCourse = new CourseModel({
       title,
       categoryId,
       subCategory: subCategoryId,
@@ -35,7 +35,7 @@ export const getAllCourse = async () => {
   try {
     await connectToDatabase();
     const { userId } = auth();
-    const courses = await Course.find({ instructorId: userId }).sort({
+    const courses = await CourseModel.find({ instructorId: userId }).sort({
       createdAt: "desc",
     });
     return courses;
@@ -48,8 +48,11 @@ export const getCourseDetail = async ({ courseId }: { courseId: string }) => {
   try {
     await connectToDatabase();
     const { userId } = auth();
-    const course = await Course.find({ instructorId: userId, _id: courseId });
-    return course
+    const course = await CourseModel.find({ instructorId: userId, _id: courseId }).populate({
+      path: "section",
+      select: "-__v -createdAt -updatedAt"
+    })
+    return JSON.parse(JSON.stringify(course))
   } catch (error: any) {
     console.log("Error in fetch course detail");
     throw new Error(error.message);
@@ -64,7 +67,7 @@ export const updateCourse = async ({formdata}: IFormdata) => {
   }
   try {
     await connectToDatabase()
-    const course = await Course.updateOne({ _id: courseId, instructorId: userId }, {
+    const course = await CourseModel.updateOne({ _id: courseId, instructorId: userId }, {
       title, subCategory, description, categoryId, levelId, imageUrl, price, subtitle
     })
 
